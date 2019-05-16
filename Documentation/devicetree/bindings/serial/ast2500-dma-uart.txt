@@ -1,0 +1,63 @@
+
+node for DMA controller:
+                       ast_uart_sdma: uart_sdma@1e79e000 {
+                               compatible = "aspeed,ast-uart-sdma";
+                               reg = <0x1e79e000 0x400>;
+                               interrupts = <50>;
+                               status = "disabled";
+                       };
+this node  doesn't binds with any driver.
+DMA controller is handled as a separate SW layer,and is included in the same driver.
+This DMA controller node is included in DT just for Register and interrupt details
+
+
+
+node for DMA-UARTS :
+
+
+Required properties:
+
+- compatible: "aspeed,ast-sdma-uart"
+- reg: The base address of the UART register bank
+- interrupts: should contain interrupt specifier.
+- clocks: Clock driving the hardware;
+- pinctrl-0 : list of pinconfigurations
+- dma-channel: channel of DMA-controller which is used
+
+Example:
+
+                 dma_uart1: dma_uart1@1e783000{
+                          compatible = "aspeed,ast-sdma-uart";
+                          reg = <0x1e783000 0x1000>;
+                          reg-shift = <2>;
+                          interrupts = <9>;
+                          clocks = <&syscon ASPEED_CLK_GATE_UART1CLK>;
+                          dma-channel = <0>;
+                          no-loopback-test;
+                          pinctrl-names = "default";
+                          pinctrl-0 = <&pinctrl_txd1_default &pinctrl_rxd1_default>;
+                          status = "disabled";
+                       };
+
+
+
+
+
+
+
+other details:
+
+bootargs = "console=tty0 console=ttyS4,115200 earlyprintk";
+
+
+-               serial0 = &uart1;
+-               serial1 = &uart2;
+-               serial2 = &uart3;
+-               serial3 = &uart4;
++               serial0 = &dma_uart1;
++               serial1 = &dma_uart2;
++               serial2 = &dma_uart3;
++               serial3 = &dma_uart4;
+                serial4 = &uart5;
+                serial5 = &vuart;
+
